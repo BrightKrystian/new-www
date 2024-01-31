@@ -47,6 +47,7 @@ const Post: React.FC<{ post: BlogPostModel }> = ({ post }) => {
       <Link to={deleteTimestampFromUrl(post.slug)}>
         <ImageWrapper className={styles.image}>
           <GatsbyImage
+            loading='eager'
             image={getImage(post.image)!}
             alt={post.title}
             className='post-img'
