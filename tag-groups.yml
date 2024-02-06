@@ -117,9 +117,7 @@ groups:
       - security
       - opentelemetry
       - observability
-      - AI
       - python
-      - machine learning
   - name: Business
     tags:
       - business
@@ -129,6 +127,12 @@ groups:
       - B2B
       - startups
       - business perspective
+  - name: AI
+      tags:
+      - AI
+      - langchain
+      - python
+      - machine learning
   - name: Blockchain
     tags:
       - blockchain
