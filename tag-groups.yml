@@ -128,7 +128,7 @@ groups:
       - startups
       - business perspective
   - name: AI
-      tags:
+    tags:
       - AI
       - langchain
       - python
