@@ -1,5 +1,5 @@
 import { graphql, Link, useStaticQuery } from 'gatsby'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { CustomSection, CustomSectionTitle } from '../shared'
 import { routeLinks } from '../../config/routing'
 import styled from 'styled-components'
@@ -11,6 +11,7 @@ import { BehanceIcon } from '../icons/Behance.icon'
 import { DribbleIcon } from './../icons/Dribble.icon'
 import { useTranslation } from 'react-i18next'
 import { SuccessStoryBox } from './SuccessStoryBox'
+import { useWindowSize } from '../utils/use-windowsize'
 
 
 export const ProjectCustomSection = styled(CustomSection) <{ isFiltered?: boolean }>`
@@ -305,7 +306,21 @@ export const Projects: React.FC<ProjectsProps> = ({
   currentSlug,
   isDefaultTitle = true
 }) => {
+  const windowSize = useWindowSize()
+  const lastElRef = useRef<HTMLDivElement>(null)
   let projects: Array<ProjectModel> = []
+
+  useEffect(() => {
+    const lastElRect = lastElRef.current?.getBoundingClientRect();
+    const prevElRect = (lastElRef.current?.previousSibling as HTMLDivElement | undefined)?.getBoundingClientRect();
+
+    if (!lastElRef.current || !lastElRect || !prevElRect) return;
+
+    const bottomDiff = prevElRect?.bottom - lastElRect.bottom;
+    const currCSSHeight = lastElRect.height;
+
+    lastElRef.current.style.height = currCSSHeight + bottomDiff + "px";
+  }, [windowSize, lastElRef.current])
 
   if (isFetchProject) {
     const {
@@ -367,6 +382,7 @@ export const Projects: React.FC<ProjectsProps> = ({
 
         {isTagsEmpty ? (
           <BlockSmall
+            ref={lastElRef}
             className={`${projects.length % 2 ? 'down is-pulled-right full-height' : ' is-pulled-left  down '}`}
           >
             <span>Follow us on:</span>
