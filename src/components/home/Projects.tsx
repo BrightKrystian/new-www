@@ -1,5 +1,5 @@
 import { graphql, Link, useStaticQuery } from 'gatsby'
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import { CustomSection, CustomSectionTitle } from '../shared'
 import { routeLinks } from '../../config/routing'
 import styled from 'styled-components'
@@ -11,8 +11,7 @@ import { BehanceIcon } from '../icons/Behance.icon'
 import { DribbleIcon } from './../icons/Dribble.icon'
 import { useTranslation } from 'react-i18next'
 import { SuccessStoryBox } from './SuccessStoryBox'
-import { useWindowSize } from '../utils/use-windowsize'
-
+import { useBalanceHeights } from './use-balance-heights'
 
 export const ProjectCustomSection = styled(CustomSection) <{ isFiltered?: boolean }>`
   & .success-story-wrapper {
@@ -306,21 +305,10 @@ export const Projects: React.FC<ProjectsProps> = ({
   currentSlug,
   isDefaultTitle = true
 }) => {
-  const windowSize = useWindowSize()
-  const lastElRef = useRef<HTMLDivElement>(null)
+  const balancedListRef = useRef<HTMLDivElement>(null)
   let projects: Array<ProjectModel> = []
 
-  useEffect(() => {
-    const lastElRect = lastElRef.current?.getBoundingClientRect();
-    const prevElRect = (lastElRef.current?.previousSibling as HTMLDivElement | undefined)?.getBoundingClientRect();
-
-    if (!lastElRef.current || !lastElRect || !prevElRect) return;
-
-    const bottomDiff = prevElRect?.bottom - lastElRect.bottom;
-    const currCSSHeight = lastElRect.height;
-
-    lastElRef.current.style.height = currCSSHeight + bottomDiff + "px";
-  }, [windowSize, lastElRef.current])
+  useBalanceHeights(balancedListRef)
 
   if (isFetchProject) {
     const {
@@ -345,7 +333,7 @@ export const Projects: React.FC<ProjectsProps> = ({
   return (
     <ProjectCustomSection paddingProps=' 0rem 15rem 4rem 15rem' isFiltered={isFiltered} >
       {isDefaultTitle && isFetchProject && <CustomSectionTitle>success stories</CustomSectionTitle>}
-      <div className='is-clearfix success-story-wrapper'>
+      <div ref={balancedListRef} className='is-clearfix success-story-wrapper'>
         <BlockSmall className='is-pulled-right'>
           <span>{t('visit our online portfolio:')}</span>
           <a target='_blank' href='https://www.behance.net/BrightInventions/' aria-label='Behance'>
@@ -382,7 +370,6 @@ export const Projects: React.FC<ProjectsProps> = ({
 
         {isTagsEmpty ? (
           <BlockSmall
-            ref={lastElRef}
             className={`${projects.length % 2 ? 'down is-pulled-right full-height' : ' is-pulled-left  down '}`}
           >
             <span>Follow us on:</span>
